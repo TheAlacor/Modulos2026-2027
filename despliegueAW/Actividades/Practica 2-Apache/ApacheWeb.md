@@ -31,6 +31,10 @@ flowchart TD
 	 - Instalación de OpenSSH Server habilitada. 
 ---
 
+![imagen numero puerto](./imagenes/gemini1.png)
+
+![imagen numero puerto](./imagenes/gemini2.png)
+
 ## Paso 3: Comprobaciones Previas en el Servidor Comandos ejecutados para verificar el entorno de trabajo: 1.
 
  
@@ -64,6 +68,10 @@ flowchart TD
 ## Paso 4: Actualización e Instalación de Apache
 
 **Actualizar el índice de paquetes de Ubuntu**:
+
+durante la pracitca he tenido problema para sincornizar la fecha por lo tanto he tenido que descargar el programa Chrony:
+
+![imagen numero puerto](./imagenes/gemini4.png)
 
 ```
 - sudo apt update
@@ -133,6 +141,10 @@ Comprobación del estado tras detenerlo:
 -  Proto Recv-Q Send-Q Local Address       Foreign Address        State PID/Program name
 - tcp         0      0 0.0.0.0:80          0.0.0.0:*              LISTEN
 ```
+
+**Visualizacion imagen puertos:**
+
+![imagen numero puerto](./imagenes/gemini5.png)
 
 **Respuestas a las cuestiones sobre el puerto**:
 
