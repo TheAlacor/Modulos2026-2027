@@ -23,7 +23,7 @@ lsb_release -a
 * `hostname`: Muestra el nombre asignado a la máquina virtual en la red.
 * `lsb_release -a`: Muestra la información detallada de la distribución Linux (versión LTS y nombre en código).
 
-![Verificación de actualización e información del sistema](./images/1.png)
+![Verificación de actualización e información del sistema](./Images/1.png)
 
 ---
 
@@ -48,7 +48,7 @@ git --version
 * **`net-tools`**: Conjunto de utilidades clásicas de red para diagnóstico e información (como `ifconfig` o `netstat`).
 * **`htop`**: Monitor interactivo de procesos en tiempo real para verificar el uso de CPU, RAM y memoria SWAP.
 
-![Confirmación de instalación de Git](./images/2.png)
+![Confirmación de instalación de Git](./Images/2.png)
 
 ---
 
@@ -74,7 +74,7 @@ groups
 * `whoami`: Imprime el nombre del usuario con la sesión abierta en la terminal.
 * `groups`: Lista los grupos a los que pertenece el usuario actual en el sistema.
 
-![Comprobación de puertos y usuarios](./images/3.png)
+![Comprobación de puertos y usuarios](./Images/3.png)
 
 ---
 
@@ -95,7 +95,7 @@ sudo ufw status
 * `sudo ufw allow ssh`: Añade la regla para permitir las conexiones entrantes al puerto 22 (TCP) de SSH y no perder el acceso remoto al activarlo.
 * `sudo ufw enable`: Habilita y activa la protección del firewall en el sistema.
 
-![Estado final del Firewall UFW](./images/4.png)
+![Estado final del Firewall UFW](./Images/4.png)
 
 ---
 
@@ -111,5 +111,5 @@ sudo shutdown now
 ### Explicación:
 Una vez apagado el sistema operativo, dentro del panel de administración de VirtualBox se crea una instantánea llamada `01_UBUNTU_LIMPIO`. Esto asegura poder revertir la máquina virtual a un estado funcional básico y configurado en cualquier momento.
 
-![Snapshot en VirtualBox](./images/5.png)
-![Snapshot en VirtualBox-2](./images/6.png)
+![Snapshot en VirtualBox](./Images/5.png)
+![Snapshot en VirtualBox-2](./Images/6.png)
