@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Mi Primer Proyecto con Firebase</title>
+
+    <style>
+        .mensaje-card {
+            background-color: #f0f2f5;
+            border: 1px solid #ddd;
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 5px;
+            font-family: sans-serif;
+        }
+    </style>
+</head>
+<body>
+    <h1>¡Hola Firebase!</h1>
+
+    <!-- Sección de Autenticación -->
+    <div id="auth-section">
+        <h2>Autenticación</h2>
+        <input type="email" id="email" placeholder="Correo electrónico">
+        <input type="password" id="password" placeholder="Contraseña">
+        <button onclick="registrarUsuario()">Registrarse</button>
+        <button onclick="loginUsuario()">Iniciar Sesión</button>
+        <button onclick="logoutUsuario()" style="display:none;" id="btn-logout">Cerrar Sesión</button>
+        <p id="estado-user">No has iniciado sesión</p>
+    </div>
+
+    <!-- Sección de Base de Datos (Firestore) -->
+    <div id="db-section" style="margin-top: 20px;">
+        <h2>Base de Datos (Firestore)</h2>
+        <input type="text" id="mensaje" placeholder="Escribe un mensaje">
+        <button onclick="guardarMensaje()">Guardar Mensaje</button>
+        <ul id="lista-mensajes"></ul>
+    </div>
+
+    <!-- Scripts de Firebase (Modular v10+) -->
+    <script type="module">
+        // Importar las funciones necesarias de los SDKs de Firebase vía CDN
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-analytics.js";
+        import { 
+            getAuth, 
+            createUserWithEmailAndPassword, 
+            signInWithEmailAndPassword, 
+            signOut, 
+            onAuthStateChanged 
+        } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { 
+            getFirestore, 
+            collection, 
+            addDoc,
+            getDocs,
+            onSnapshot 
+        } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        // Configuración de tu app con tus datos reales
+        const firebaseConfig = {
+            apiKey: "AIzaSyCRF2v7tEHIu33LzjYDdIZ3J7j-oQQDwhE",
+            authDomain: "miappfirebase-32cec.firebaseapp.com",
+            projectId: "miappfirebase-32cec",
+            storageBucket: "miappfirebase-32cec.firebasestorage.app",
+            messagingSenderId: "46185664256",
+            appId: "1:46185664256:web:99a7285e31fbb2f36fade5",
+            measurementId: "G-WCQWV09B59"
+        };
+
+        // Inicializar Firebase
+        const app = initializeApp(firebaseConfig);
+        const analytics = getAnalytics(app);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        // Exponer funciones al ámbito global para los botones HTML
+        window.registrarUsuario = async () => {
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            try {
+                await createUserWithEmailAndPassword(auth, email, password);
+                alert("¡Usuario registrado con éxito!");
+            } catch (error) {
+                alert("Error: " + error.message);
+            }
+        };
+
+        window.loginUsuario = async () => {
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            try {
+                await signInWithEmailAndPassword(auth, email, password);
+                alert("¡Sesión iniciada!");
+            } catch (error) {
+                alert("Error: " + error.message);
+            }
+        };
+
+        window.logoutUsuario = async () => {
+            await signOut(auth);
+            alert("Sesión cerrada");
+        };
+
+        // Escuchar cambios en el estado de autenticación
+        onAuthStateChanged(auth, (user) => {
+            const estado = document.getElementById('estado-user');
+            const btnLogout = document.getElementById('btn-logout');
+            if (user) {
+                estado.innerText = `Conectado como: ${user.email}`;
+                btnLogout.style.display = 'inline-block';
+            } else {
+                estado.innerText = "No has iniciado sesión";
+                btnLogout.style.display = 'none';
+            }
+        });
+
+        // Funciones de Firestore
+        window.guardarMensaje = async () => {
+            const texto = document.getElementById('mensaje').value;
+            try {
+                await addDoc(collection(db, "mensajes"), {
+                    texto: texto,
+                    fecha: new Date()
+                });
+                document.getElementById('mensaje').value = '';
+                console.log("Mensaje guardado correctamente");
+            } catch (e) {
+                console.error("Error al añadir documento: ", e);
+            }
+        };
+
+        // Leer datos en tiempo real de Firestore
+        const lista = document.getElementById('lista-mensajes');
+        onSnapshot(collection(db, "mensajes"), (snapshot) => {
+            lista.innerHTML = "";
+            snapshot.forEach((doc) => {
+                const data = doc.data();
+                const div = document.createElement('div');
+                
+                div.innerText = data.texto;
+                
+                // Añadir la clase de estilo aquí
+                div.classList.add('mensaje-card');
+                
+                lista.appendChild(div);
+            });
+        });
+    </script>
+</body>
+</html>
