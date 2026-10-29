@@ -16,7 +16,7 @@ sudo systemctl status apache2
 
 ```
 
-![imagen 1](Practical Assignment 2.2/imagenes/1)
+![imagen 1](Practical Assignment 2.2/imagenes/1.png)
 
 
 Nota de Firewall: Se verificó la apertura del puerto 80 en UFW mediante la regla:
@@ -38,8 +38,8 @@ sudo chown -R www-data:www-data /var/www/html
 sudo chmod 644 /var/www/html/index.html
 ```
 
-![imagen 2](Practical Assignment 2.2/imagenes/2)
-![imagen 2](Practical Assignment 2.2/imagenes/3)
+![imagen 2](Practical Assignment 2.2/imagenes/2.png)
+![imagen 2](Practical Assignment 2.2/imagenes/3.png)
 
 Para finalizar la práctica, se realizó la prueba de conectividad desde el navegador del sistema anfitrión (Windows) accediendo a la IP del servidor mediante una pestaña de incógnito:
 
