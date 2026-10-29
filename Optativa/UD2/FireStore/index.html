@@ -1,151 +1,133 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <title>Mi Primer Proyecto con Firebase</title>
-
-    <style>
-        .mensaje-card {
-            background-color: #f0f2f5;
-            border: 1px solid #ddd;
-            padding: 10px;
-            margin: 5px 0;
-            border-radius: 5px;
-            font-family: sans-serif;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mi Biblioteca de Libros</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f9;
+      padding: 20px;
+    }
+    h1 {
+      text-align: center;
+    }
+    .grid-libros {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      justify-content: center;
+    }
+    .tarjeta-libro {
+      background: #fff;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      width: 200px;
+      padding: 15px;
+      text-align: center;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    .tarjeta-libro img {
+      width: 100%;
+      height: 280px;
+      object-fit: cover;
+      border-radius: 4px;
+    }
+    .tarjeta-libro h3 {
+      font-size: 1.1em;
+      margin: 10px 0 5px 0;
+    }
+    .tarjeta-libro p {
+      color: #666;
+      font-size: 0.9em;
+      margin: 0;
+    }
+  </style>
 </head>
 <body>
-    <h1>¡Hola Firebase!</h1>
 
-    <!-- Sección de Autenticación -->
-    <div id="auth-section">
-        <h2>Autenticación</h2>
-        <input type="email" id="email" placeholder="Correo electrónico">
-        <input type="password" id="password" placeholder="Contraseña">
-        <button onclick="registrarUsuario()">Registrarse</button>
-        <button onclick="loginUsuario()">Iniciar Sesión</button>
-        <button onclick="logoutUsuario()" style="display:none;" id="btn-logout">Cerrar Sesión</button>
-        <p id="estado-user">No has iniciado sesión</p>
-    </div>
+  <h1>Mis Libros</h1>
+  <div id="contenedor-libros" class="grid-libros">
+    <p>Cargando libros...</p>
+  </div>
 
-    <!-- Sección de Base de Datos (Firestore) -->
-    <div id="db-section" style="margin-top: 20px;">
-        <h2>Base de Datos (Firestore)</h2>
-        <input type="text" id="mensaje" placeholder="Escribe un mensaje">
-        <button onclick="guardarMensaje()">Guardar Mensaje</button>
-        <ul id="lista-mensajes"></ul>
-    </div>
+<script type="module">
+    // Importar las funciones necesarias de los SDKs de Firebase vía CDN
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-analytics.js";
+    import { 
+        getAuth, 
+        createUserWithEmailAndPassword, 
+        signInWithEmailAndPassword, 
+        signOut, 
+        onAuthStateChanged 
+    } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    import { 
+        getFirestore, 
+        collection, 
+        addDoc,
+        getDocs,
+        onSnapshot 
+    } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-    <!-- Scripts de Firebase (Modular v10+) -->
-    <script type="module">
-        // Importar las funciones necesarias de los SDKs de Firebase vía CDN
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-analytics.js";
-        import { 
-            getAuth, 
-            createUserWithEmailAndPassword, 
-            signInWithEmailAndPassword, 
-            signOut, 
-            onAuthStateChanged 
-        } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-        import { 
-            getFirestore, 
-            collection, 
-            addDoc,
-            getDocs,
-            onSnapshot 
-        } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    // Configuración de tu app con tus datos reales
+    const firebaseConfig = {
+        apiKey: "AIzaSyCRF2v7tEHIu33LzjYDdIZ3J7j-oQQDwhE",
+        authDomain: "miappfirebase-32cec.firebaseapp.com",
+        projectId: "miappfirebase-32cec",
+        storageBucket: "miappfirebase-32cec.firebasestorage.app",
+        messagingSenderId: "46185664256",
+        appId: "1:46185664256:web:99a7285e31fbb2f36fade5",
+        measurementId: "G-WCQWV09B59"
+    };
 
-        // Configuración de tu app con tus datos reales
-        const firebaseConfig = {
-            apiKey: "AIzaSyCRF2v7tEHIu33LzjYDdIZ3J7j-oQQDwhE",
-            authDomain: "miappfirebase-32cec.firebaseapp.com",
-            projectId: "miappfirebase-32cec",
-            storageBucket: "miappfirebase-32cec.firebasestorage.app",
-            messagingSenderId: "46185664256",
-            appId: "1:46185664256:web:99a7285e31fbb2f36fade5",
-            measurementId: "G-WCQWV09B59"
-        };
+    // 1. Inicializar Firebase y Firestore
+    const app = initializeApp(firebaseConfig);
+    const analytics = getAnalytics(app);
+    const db = getFirestore(app);
+    const auth = getAuth(app);
 
-        // Inicializar Firebase
-        const app = initializeApp(firebaseConfig);
-        const analytics = getAnalytics(app);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
+    // 2. Elemento contenedor en tu HTML
+    const contenedor = document.getElementById('contenedor-libros');
 
-        // Exponer funciones al ámbito global para los botones HTML
-        window.registrarUsuario = async () => {
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-            try {
-                await createUserWithEmailAndPassword(auth, email, password);
-                alert("¡Usuario registrado con éxito!");
-            } catch (error) {
-                alert("Error: " + error.message);
-            }
-        };
+    // 3. Función para obtener los libros una sola vez al cargar la página
+    async function cargarLibros() {
+      try {
+        const querySnapshot = await getDocs(collection(db, "Libros"));
+        
+        if (contenedor) {
+          contenedor.innerHTML = "";
 
-        window.loginUsuario = async () => {
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-            try {
-                await signInWithEmailAndPassword(auth, email, password);
-                alert("¡Sesión iniciada!");
-            } catch (error) {
-                alert("Error: " + error.message);
-            }
-        };
+          if (querySnapshot.empty) {
+            contenedor.innerHTML = "<p>No hay libros registrados.</p>";
+            return;
+          }
 
-        window.logoutUsuario = async () => {
-            await signOut(auth);
-            alert("Sesión cerrada");
-        };
+          querySnapshot.forEach((doc) => {
+            const libro = doc.data();
 
-        // Escuchar cambios en el estado de autenticación
-        onAuthStateChanged(auth, (user) => {
-            const estado = document.getElementById('estado-user');
-            const btnLogout = document.getElementById('btn-logout');
-            if (user) {
-                estado.innerText = `Conectado como: ${user.email}`;
-                btnLogout.style.display = 'inline-block';
-            } else {
-                estado.innerText = "No has iniciado sesión";
-                btnLogout.style.display = 'none';
-            }
-        });
+            // Crear tarjeta para cada libro
+            const tarjeta = document.createElement('div');
+            tarjeta.className = 'tarjeta-libro';
 
-        // Funciones de Firestore
-        window.guardarMensaje = async () => {
-            const texto = document.getElementById('mensaje').value;
-            try {
-                await addDoc(collection(db, "mensajes"), {
-                    texto: texto,
-                    fecha: new Date()
-                });
-                document.getElementById('mensaje').value = '';
-                console.log("Mensaje guardado correctamente");
-            } catch (e) {
-                console.error("Error al añadir documento: ", e);
-            }
-        };
+            tarjeta.innerHTML = `
+              <img src="${libro.Portada}" alt="Portada de ${libro.titulo}" style="width: 150px; height: 220px; object-fit: cover;">
+              <h3>${libro.titulo}</h3>
+              <p><strong>Autor:</strong> ${libro.Autor}</p>
+            `;
 
-        // Leer datos en tiempo real de Firestore
-        const lista = document.getElementById('lista-mensajes');
-        onSnapshot(collection(db, "mensajes"), (snapshot) => {
-            lista.innerHTML = "";
-            snapshot.forEach((doc) => {
-                const data = doc.data();
-                const div = document.createElement('div');
-                
-                div.innerText = data.texto;
-                
-                // Añadir la clase de estilo aquí
-                div.classList.add('mensaje-card');
-                
-                lista.appendChild(div);
-            });
-        });
-    </script>
-</body>
-</html>
+            contenedor.appendChild(tarjeta);
+          });
+        }
+      } catch (error) {
+        console.error("Error obteniendo los libros:", error);
+        if (contenedor) {
+          contenedor.innerHTML = "<p>Error al cargar los libros.</p>";
+        }
+      }
+    }
+
+    // Ejecutar la función
+    cargarLibros();
+</script>
