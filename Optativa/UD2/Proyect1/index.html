@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <!-- Vital para responsive y evitar zoom no deseado en móviles -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Pizarra de Post-its Interactiva</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+  <!-- Lienzo principal de la pizarra -->
+  <main id="board"></main>
+
+  <!-- Botón Acción Flotante (FAB) -->
+  <button id="fab" aria-label="Añadir nota">+</button>
+
+  <!-- Modal para Crear / Editar Nota -->
+  <div id="note-modal" class="modal hidden">
+    <div class="modal-content">
+      <h3 id="modal-title">Nueva Nota</h3>
+      <textarea id="note-text" placeholder="Escribe tu nota aquí..." rows="4"></textarea>
+      
+      <div class="color-picker">
+        <label>Color:</label>
+        <div class="color-options">
+          <button class="color-btn selected" data-color="#fff59d" style="background:#fff59d;"></button>
+          <button class="color-btn" data-color="#ffcc80" style="background:#ffcc80;"></button>
+          <button class="color-btn" data-color="#81d4fa" style="background:#81d4fa;"></button>
+          <button class="color-btn" data-color="#a5d6a7" style="background:#a5d6a7;"></button>
+          <button class="color-btn" data-color="#f48fb1" style="background:#f48fb1;"></button>
+        </div>
+      </div>
+
+      <div class="modal-actions">
+        <button id="btn-cancel-note" class="btn-secondary">Cancelar</button>
+        <button id="btn-save-note" class="btn-primary">Guardar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Personalizado para Confirmar Borrado -->
+  <div id="confirm-modal" class="modal hidden">
+    <div class="modal-content">
+      <h3>¿Eliminar esta nota?</h3>
+      <p>Esta acción no se puede deshacer.</p>
+      <div class="modal-actions">
+        <button id="btn-cancel-delete" class="btn-secondary">Cancelar</button>
+        <button id="btn-confirm-delete" class="btn-danger">Eliminar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SDK v9+ de Firebase (Módulos ES) -->
+  <script type="module" src="app.js"></script>
+</body>
+</html>
